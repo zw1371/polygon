@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>判断点是否在不规则多边形内部</title>
+  <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+  <style>
+    html,body{
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    .map{
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="map" id="map"></div>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1y7UqZKU5itoPG9QQSDWYVZP"></script>
+  <script src="./DrawingManager.js"></script>
+  <script src="./polygon.js"></script>
+  <script>
+    // var point = {lat:6,lng:8}
+    // var pointList = [
+    //   {
+    //     lat:5,
+    //     lng:8
+    //   },
+    //   {
+    //     lat:8,
+    //     lng:10
+    //   },
+    //   {
+    //     lat:15,
+    //     lng:10
+    //   },
+    //   {
+    //     lat:12,
+    //     lng:6
+    //   }
+    // ]
+    // console.log(IsInPolygon(pointList,point))
+    alert("在绘制多边形后,你将无法在多边形内部添加标注");
+    var currentDrawPolygon;
+    var map = new BMap.Map("map",{enableMapClick:false});
+    var point = new BMap.Point(116.404, 39.915);
+    map.centerAndZoom(point, 15);
+    map.addControl(new BMap.NavigationControl()); //缩放工具
+    map.addControl(new BMap.ScaleControl());
+    map.enableScrollWheelZoom(); //鼠标滚轮缩放
+    let drawingManager = new BMapLib.DrawingManager(map, {
+          isOpen: false, //是否开启绘制模式
+          enableDrawingTool: true, //是否显示工具栏
+          drawingToolOptions: {
+            anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+            offset: new BMap.Size(5, 5), //偏离值
+            drawingModes: [BMAP_DRAWING_POLYGON,BMAP_DRAWING_MARKER],
+            enableCalculate: true,
+            enableEditing: true
+          }
+        });
+    drawingManager.addEventListener('polygoncomplete', afterPolygoncomplete);
+    drawingManager.addEventListener('markercomplete', afterMarkercomplete);
+    //绘制多边形结束
+    function afterPolygoncomplete(e){
+      !!currentDrawPolygon ? map.removeOverlay(currentDrawPolygon) : null; //清除地图上所有覆盖物
+      currentDrawPolygon = e;
+    }
+    //绘制点结束后
+    function afterMarkercomplete(e){
+      if(!currentDrawPolygon){
+        return;
+      }
+      var pointList = currentDrawPolygon.getPath();
+      if(IsInPolygon(pointList,e.getPosition())){
+        map.removeOverlay(e)
+      }
+    }
+  </script>
+</body>
+</html>
