@@ -3,3 +3,4 @@
  - 1：使用工具绘制一个多边型(Use tools on the top right to draw a polygon)
  - 2：尝试在多边性内放置标记(Try to place the marker within the multilateral)
  
+<img src="https://sleepy-babbage-2cce74.netlify.app/polygon-master/map.png" width="939px" style="display:inline;">
